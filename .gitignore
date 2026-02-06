@@ -50,3 +50,13 @@ next-env.d.ts
 *.swo
 *~
 
+# Temporary/helper files from early development
+Buildrail.html
+FOOTER_COMPLETE.md
+Shipflow.html
+Structly.html
+codeway.html
+codeway_new.html
+dif_name.md
+index.html
+wide_description_of_project.md
