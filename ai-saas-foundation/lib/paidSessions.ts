@@ -1,1 +1,0 @@
-export const paidSessions = new Set<string>()
