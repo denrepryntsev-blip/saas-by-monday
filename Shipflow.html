@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="uk" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shipflow Identity System</title>
+    <style>
+        :root {
+            /* DARK THEME (DEFAULT) */
+            --bg-body: #050505;
+            --bg-card: #121212;
+            --bg-glass: rgba(18, 18, 18, 0.6);
+            --border-color: #262626;
+            
+            --text-main: #ffffff;
+            --text-muted: #737373;
+            
+            /* Shipflow Colors */
+            --brand-primary: #f43f5e; /* Rose 500 */
+            --brand-glow: rgba(244, 63, 94, 0.5);
+            --brand-dark: #be123c;
+            --brand-surface: #2c0b11;
+            
+            --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+            --font-display: 'Inter', system-ui, sans-serif;
+            
+            --grid-dot: rgba(255, 255, 255, 0.1);
+            --shadow-card: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        /* LIGHT THEME OVERRIDES */
+        html[data-theme="light"] {
+            --bg-body: #fff1f2; /* Very light rose tint */
+            --bg-card: #ffffff;
+            --bg-glass: rgba(255, 255, 255, 0.8);
+            --border-color: #fecdd3; /* Rose 200 */
+            
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            
+            --brand-primary: #e11d48; /* Rose 600 - Darker for contrast */
+            --brand-glow: rgba(225, 29, 72, 0.2);
+            
+            --grid-dot: #fda4af; /* Rose 300 dots */
+            --shadow-card: 0 10px 30px rgba(244, 63, 94, 0.15);
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 40px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* BACKGROUND GRID CANVAS */
+        #grid-canvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* THEME TOGGLE */
+        .theme-toggle {
+            position: fixed;
+            bottom: 30px; right: 30px;
+            width: 50px; height: 50px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; z-index: 100;
+            box-shadow: var(--shadow-card);
+            color: var(--brand-primary);
+            transition: all 0.3s ease;
+        }
+        .theme-toggle:hover { transform: scale(1.1); box-shadow: 0 0 20px var(--brand-glow); }
+
+        /* HEADER */
+        header {
+            margin-bottom: 60px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+
+        .brand-name {
+            font-size: 1.5rem;
+            font-weight: 800;
+            font-style: italic;
+            letter-spacing: -0.02em;
+        }
+
+        .section-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--brand-primary);
+            margin-bottom: 25px;
+            margin-top: 80px;
+            border-left: 2px solid var(--brand-primary);
+            padding-left: 10px;
+        }
+
+        /* HERO LOGO AREA */
+        .hero-logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 40px;
+            /* Removed heavy border and background */
+            background: radial-gradient(circle at center, var(--brand-glow) 0%, transparent 70%);
+            border: none; 
+            border-radius: 24px;
+            position: relative;
+            /* overflow: hidden; Removed to let glow spread */
+            /* box-shadow: var(--shadow-card); Removed card shadow */
+            cursor: pointer;
+        }
+
+        .hero-wrapper {
+            display: flex; justify-content: center;
+            margin: 60px 0;
+        }
+
+        .logo-mark {
+            width: 220px; /* Slightly larger */
+            height: 220px;
+            z-index: 2;
+            filter: drop-shadow(0 0 40px var(--brand-glow));
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        /* HOVER ANIMATIONS */
+        .hero-logo:hover .logo-mark {
+            transform: scale(1.05) rotate(-2deg);
+        }
+        
+        /* Restoring Original Kinetic Box Concept with Assembly Animation */
+        .box-part {
+            transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        
+        /* "Assembly" Effect on Hover - Parts move slightly apart then together */
+        .hero-logo:hover .box-top { transform: translateY(-8px); }
+        .hero-logo:hover .box-side { transform: translateX(-4px) translateY(4px); }
+        .hero-logo:hover .box-front { transform: translateX(4px) translateY(4px); }
+        
+        /* Speed Lines Animation */
+        .speed-line {
+            transition: opacity 0.3s, stroke-dasharray 0.3s;
+        }
+        
+        .hero-logo:hover .speed-line {
+            /* Change to dashed pattern on hover to show movement */
+            stroke-dasharray: 10 20; 
+            animation: speedMove 0.5s linear infinite; /* Faster animation */
+            opacity: 1; 
+            stroke-width: 4; /* Slightly thicker */
+        }
+        
+        @keyframes speedMove {
+            0% { stroke-dashoffset: 0; }
+            100% { stroke-dashoffset: -30; } /* Move left (towards box context) or right depending on flow */
+        }
+
+        .logo-text {
+            font-family: var(--font-display);
+            font-weight: 900;
+            font-style: italic;
+            font-size: 4rem;
+            margin-top: 10px;
+            letter-spacing: -0.06em;
+            z-index: 2;
+            line-height: 1;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.5); /* Added shadow for readability without card bg */
+        }
+
+        .text-ship { color: var(--text-main); }
+        .text-flow { color: var(--brand-primary); }
+
+        /* GRID SYSTEM */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+        .card:hover {
+            border-color: var(--brand-primary);
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-card);
+        }
+
+        .card-header {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--text-main);
+        }
+
+        .card-desc {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* UI MOCKUPS */
+        .btn-primary {
+            background: var(--brand-primary);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 20px var(--brand-glow);
+            transition: transform 0.1s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-primary:active { transform: translateY(2px); }
+
+        .terminal-mockup {
+            background: #0f0f0f; /* Always dark terminal */
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #d4d4d4;
+        }
+        .cmd { color: #f43f5e; }
+        .success { color: #4ade80; }
+
+        /* PALETTE */
+        .palette-strip {
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            overflow: hidden;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+        }
+        .p-color { flex: 1; display: flex; align-items: end; padding: 10px; font-size: 0.75rem; font-family: monospace; font-weight: bold; }
+
+    </style>
+</head>
+<body>
+
+<canvas id="grid-canvas"></canvas>
+
+<button class="theme-toggle" id="theme-toggle">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="5"></circle>
+        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
+    </svg>
+</button>
+
+<div class="container">
+    
+    <header>
+        <div class="brand-name">SHIPFLOW <span style="color:var(--text-muted); font-weight:400; font-style:normal; font-size: 0.9rem;">// Identity System</span></div>
+        <div style="font-size: 0.8rem; color: var(--brand-primary); font-weight: 700;">READY TO DEPLOY</div>
+    </header>
+
+    <!-- HERO -->
+    <div class="hero-wrapper" id="hero-wrapper">
+        <div class="hero-logo" id="hero-card">
+            
+            <!-- LOGO SVG: The Kinetic Box (Restored Original Shape) -->
+            <svg class="logo-mark" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="grad1" x1="20" y1="20" x2="80" y2="80">
+                        <stop offset="0%" stop-color="#f43f5e"/>
+                        <stop offset="100%" stop-color="#9f1239"/>
+                    </linearGradient>
+                </defs>
+                
+                <!-- Speed Lines (Behind, Visible by default) -->
+                <path class="speed-line" d="M10 60 H40" stroke="var(--text-main)" stroke-width="3" stroke-linecap="round" stroke-opacity="0.3" stroke-dasharray="200"/>
+                <path class="speed-line" d="M5 70 H30" stroke="var(--text-main)" stroke-width="3" stroke-linecap="round" stroke-opacity="0.2" stroke-dasharray="200"/>
+
+                <!-- The Box Parts (Classes for Animation) -->
+                <g> 
+                    <!-- Top Face -->
+                    <path class="box-part box-top" d="M30 35 L60 25 L90 35 L60 45 Z" fill="#f43f5e"/>
+                    <!-- Side Face (Darker) -->
+                    <path class="box-part box-side" d="M30 35 V70 L60 80 V45 Z" fill="url(#grad1)"/>
+                    <!-- Front Face (Brightest) -->
+                    <path class="box-part box-front" d="M60 80 L90 70 V35 L60 45 Z" fill="#fb7185"/>
+                    
+                    <!-- Tape/Details -->
+                    <path class="box-part box-front" d="M60 25 V45 V80" stroke="#881337" stroke-width="2" stroke-opacity="0.5"/>
+                    <path class="box-part box-top" d="M30 35 L60 45 L90 35" stroke="#881337" stroke-width="2" stroke-opacity="0.3"/>
+                </g>
+            </svg>
+
+            <div class="logo-text">
+                <span class="text-ship">SHIP</span><span class="text-flow">FLOW</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- PHILOSOPHY & LOGIC -->
+    <div class="section-title">01. Конструкція & Рух</div>
+    <div class="grid-3">
+        
+        <!-- Logic Card 1: The Box -->
+        <div class="card">
+            <div class="card-header">Коробка (The Package)</div>
+            <div style="height: 100px; display:flex; align-items:center; justify-content:center; background: var(--bg-body); border-radius:8px; margin-bottom:15px; border:1px solid var(--border-color);">
+                 <!-- Exact Mini Box Replica -->
+                 <svg width="60" height="60" viewBox="0 0 100 100" fill="none">
+                    <defs>
+                        <linearGradient id="gradMini" x1="20" y1="20" x2="80" y2="80">
+                            <stop offset="0%" stop-color="#f43f5e"/>
+                            <stop offset="100%" stop-color="#9f1239"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M30 35 L60 25 L90 35 L60 45 Z" fill="#f43f5e"/>
+                    <path d="M30 35 V70 L60 80 V45 Z" fill="url(#gradMini)"/>
+                    <path d="M60 80 L90 70 V35 L60 45 Z" fill="#fb7185"/>
+                    <!-- Tape -->
+                    <path d="M60 25 V45 V80" stroke="#881337" stroke-width="2" stroke-opacity="0.5"/>
+                    <path d="M30 35 L60 45 L90 35" stroke="#881337" stroke-width="2" stroke-opacity="0.3"/>
+                 </svg>
+            </div>
+            <p class="card-desc">
+                Ми пакуємо складність у простий контейнер. Користувач отримує готовий продукт, а не набір деталей.
+            </p>
+        </div>
+
+        <!-- Logic Card 2: Speed Lines -->
+        <div class="card">
+            <div class="card-header">Швидкість (Speed Lines)</div>
+            <div style="height: 100px; display:flex; align-items:center; justify-content:center; background: var(--bg-body); border-radius:8px; margin-bottom:15px; border:1px solid var(--border-color); overflow:hidden;">
+                <svg width="100" height="60" viewBox="0 0 100 100" fill="none"> <!-- Adjusted ViewBox to match logo scale -->
+                    <!-- Exact lines from Hero Logo -->
+                    <path d="M10 60 H40" stroke="var(--text-main)" stroke-width="6" stroke-linecap="round" stroke-opacity="0.3" stroke-dasharray="10 10"/>
+                    <path d="M5 70 H30" stroke="var(--text-main)" stroke-width="6" stroke-linecap="round" stroke-opacity="0.2" stroke-dasharray="10 10"/>
+                    
+                    <!-- Animated overlay for effect -->
+                    <path d="M10 60 H40" stroke="var(--brand-primary)" stroke-width="6" stroke-linecap="round" stroke-dasharray="10 20" stroke-opacity="0.8">
+                         <animate attributeName="stroke-dashoffset" from="0" to="-30" dur="1s" repeatCount="indefinite"/>
+                    </path>
+                </svg>
+            </div>
+            <p class="card-desc">
+                Горизонтальні лінії зліва — невід'ємна частина бренду. Вони показують рух та швидкість "збірки на льоту".
+            </p>
+        </div>
+
+        <!-- Logic Card 3: Color -->
+        <div class="card">
+            <div class="card-header">Енергія (Rose Alert)</div>
+            <div style="display: flex; height: 100px; margin-bottom: 15px; border-radius: 8px; overflow: hidden;">
+                <div style="flex:1; background:#f43f5e; display:flex; align-items:end; padding:10px; font-weight:bold; font-size:0.8rem;">Primary</div>
+                <div style="flex:1; background:#881337; display:flex; align-items:end; padding:10px; color:white; font-size:0.8rem;">Deep</div>
+                <div style="flex:1; background:#fff1f2; display:flex; align-items:end; padding:10px; color:black; font-size:0.8rem;">Light</div>
+            </div>
+            <p class="card-desc">
+                Використовуємо агресивний червоний/рожевий для акценту на дії. Це колір терміновості та високої енергії.
+            </p>
+        </div>
+    </div>
+
+    <!-- VISUAL LANGUAGE & UI -->
+    <div class="section-title">02. Бренд в інтерфейсі (UI Kit)</div>
+    <div class="grid-3">
+        
+        <!-- App Icon -->
+        <div class="card" style="display:flex; flex-direction:column; align-items:center;">
+            <div class="card-header" style="width:100%">App Icon</div>
+            <div style="display:flex; gap:20px; width:100%; justify-content:center; margin-bottom:15px;">
+                <!-- Dark Icon -->
+                <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #2c0b11 0%, #0f0507 100%); border: 1px solid #4c1d25; border-radius: 18px; display:flex; align-items:center; justify-content:center; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+                     <svg width="50" height="50" viewBox="0 0 100 100" fill="none">
+                        <defs>
+                            <linearGradient id="iconGradD" x1="20" y1="20" x2="80" y2="80">
+                                <stop offset="0%" stop-color="#f43f5e"/>
+                                <stop offset="100%" stop-color="#9f1239"/>
+                            </linearGradient>
+                        </defs>
+                        <!-- Speed Lines added -->
+                        <path d="M10 60 H30" stroke="rgba(255,255,255,0.2)" stroke-width="4" stroke-linecap="round"/>
+                        <path d="M5 70 H25" stroke="rgba(255,255,255,0.1)" stroke-width="4" stroke-linecap="round"/>
+                        
+                        <path d="M30 35 L60 25 L90 35 L60 45 Z" fill="#f43f5e"/>
+                        <path d="M30 35 V70 L60 80 V45 Z" fill="url(#iconGradD)"/>
+                        <path d="M60 80 L90 70 V35 L60 45 Z" fill="#fb7185"/>
+                    </svg>
+                </div>
+                <!-- Light Icon -->
+                <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #ffffff 0%, #fff1f2 100%); border: 1px solid #fecdd3; border-radius: 18px; display:flex; align-items:center; justify-content:center; box-shadow: 0 10px 25px rgba(244, 63, 94, 0.1);">
+                     <svg width="50" height="50" viewBox="0 0 100 100" fill="none">
+                        <defs>
+                            <linearGradient id="iconGradL" x1="20" y1="20" x2="80" y2="80">
+                                <stop offset="0%" stop-color="#e11d48"/>
+                                <stop offset="100%" stop-color="#9f1239"/>
+                            </linearGradient>
+                        </defs>
+                        <!-- Speed Lines added (Darker/More visible for light mode) -->
+                        <path d="M10 60 H30" stroke="#be123c" stroke-width="4" stroke-linecap="round" stroke-opacity="0.2"/>
+                        <path d="M5 70 H25" stroke="#be123c" stroke-width="4" stroke-linecap="round" stroke-opacity="0.15"/>
+
+                        <path d="M30 35 L60 25 L90 35 L60 45 Z" fill="#e11d48"/>
+                        <path d="M30 35 V75 L60 85 V45 Z" fill="url(#iconGradL)"/>
+                        <path d="M60 85 L90 75 V35 L60 45 Z" fill="#f43f5e"/>
+                    </svg>
+                </div>
+            </div>
+            <p style="font-size:0.8rem; color:var(--text-muted); text-align:center;">Контрастна 3D коробка зі слідами руху.</p>
+        </div>
+
+        <!-- UI Elements (Inputs, Toggles) -->
+        <div class="card">
+            <div class="card-header">Inputs & Toggles</div>
+            <div style="display:flex; flex-direction:column; gap:15px;">
+                <!-- Input -->
+                <div style="position:relative;">
+                    <input type="text" value="production-branch" readonly style="width:100%; box-sizing:border-box; background:var(--bg-body); border:1px solid var(--border-color); padding:10px; border-radius:6px; color:var(--text-main); font-family:var(--font-mono); font-size:0.9rem;">
+                    <div style="position:absolute; right:10px; top:50%; transform:translateY(-50%); color:var(--brand-primary); font-size:0.7rem; font-weight:bold;">GIT</div>
+                </div>
+                <!-- Toggle -->
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; border:1px solid var(--border-color); border-radius:6px; background:var(--bg-body);">
+                    <span style="font-size:0.9rem;">Auto-Deploy</span>
+                    <div style="width:40px; height:22px; background:var(--brand-primary); border-radius:11px; position:relative;">
+                        <div style="width:18px; height:18px; background:white; border-radius:50%; position:absolute; top:2px; right:2px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Primary Action & Progress -->
+        <div class="card" style="display:flex; flex-direction:column; justify-content:center;">
+            <div class="card-header">Actions & State</div>
+            <div style="display:flex; flex-direction:column; gap:15px;">
+                <button class="btn-primary">
+                    SHIP PROJECT
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </button>
+                
+                <!-- Progress Bar -->
+                <div>
+                    <div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-bottom:5px; color:var(--text-muted);">
+                        <span>Deploying...</span>
+                        <span>85%</span>
+                    </div>
+                    <div style="width:100%; height:6px; background:var(--bg-body); border-radius:3px; overflow:hidden;">
+                        <div style="width:85%; height:100%; background:var(--brand-primary); border-radius:3px;">
+                            <div style="width:100%; height:100%; background:linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%); animation: shimmer 1s infinite;"></div>
+                        </div>
+                    </div>
+                    <style> @keyframes shimmer { 0% {transform:translateX(-100%);} 100% {transform:translateX(100%);} } </style>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- TYPOGRAPHY & COLORS -->
+    <div class="section-title">03. Система стилю</div>
+    <div class="grid-3">
+        <div class="card" style="grid-column: span 2;">
+            <div class="card-header">Кольорова палітра</div>
+            <div class="palette-strip">
+                <div class="p-color" style="background:#fff1f2; color:#000;">#FFF1F2</div>
+                <div class="p-color" style="background:#fb7185; color:#000;">#FB7185</div>
+                <div class="p-color" style="background:#f43f5e; color:#fff;">#F43F5E</div>
+                <div class="p-color" style="background:#e11d48; color:#fff;">#E11D48</div>
+                <div class="p-color" style="background:#881337; color:#fff;">#881337</div>
+            </div>
+            <p class="card-desc">Від світлого "Neon Flash" до глибокого "Engine Red". Ми використовуємо максимально насичені кольори для привернення уваги.</p>
+        </div>
+
+        <div class="card">
+            <div class="card-header">Типографіка</div>
+            <div style="font-size: 2.5rem; font-weight: 900; font-style: italic; line-height: 1; margin-bottom: 10px; color: var(--text-main);">
+                SHIPPED.
+            </div>
+            <p class="card-desc">
+                Заголовки: <strong>Heavy & Italic</strong>.<br>
+                Текст: Чистий Sans-serif.<br>
+                Код: Monospace.
+            </p>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // 1. THEME TOGGLE
+    const toggleBtn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+
+    const savedTheme = localStorage.getItem('shipflow_theme') || 'dark';
+    html.setAttribute('data-theme', savedTheme);
+
+    toggleBtn.addEventListener('click', () => {
+        const currentTheme = html.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('shipflow_theme', newTheme);
+    });
+
+    // 2. 3D TILT EFFECT - DISABLED FOR WRAPPER, ADDED FOR LOGO ONLY
+    const card = document.getElementById('hero-card');
+    
+    // We only listen on the card itself now, not the wrapper
+    card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+
+        // Subtle movement for the box inside
+        const rotateX = ((y - centerY) / centerY) * -5; 
+        const rotateY = ((x - centerX) / centerX) * 5;
+
+        // Apply to logo mark (child) instead of card tilt
+        const logo = card.querySelector('.logo-mark');
+        if(logo) {
+            logo.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
+        }
+    });
+
+    card.addEventListener('mouseleave', () => {
+         const logo = card.querySelector('.logo-mark');
+         if(logo) {
+            logo.style.transform = `rotateX(0deg) rotateY(0deg) scale(1)`;
+         }
+    });
+
+    // 3. BACKGROUND ANIMATION (Canvas)
+    const canvas = document.getElementById('grid-canvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+
+    function resize() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // Particles moving fast (Flow)
+    const particles = [];
+    const particleCount = 40;
+
+    class Particle {
+        constructor() {
+            this.reset();
+        }
+        reset() {
+            this.x = Math.random() * width;
+            this.y = Math.random() * height;
+            this.z = Math.random() * 2 + 0.5; // Speed factor
+            this.len = Math.random() * 20 + 10;
+            this.opacity = Math.random() * 0.5;
+        }
+        update() {
+            this.y += 5 * this.z; // Move down like rain/flow
+            if (this.y > height) {
+                this.y = -this.len;
+                this.x = Math.random() * width;
+            }
+        }
+        draw() {
+            ctx.beginPath();
+            const style = getComputedStyle(document.documentElement);
+            const color = style.getPropertyValue('--brand-primary').trim();
+            
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 1;
+            ctx.globalAlpha = 0.2 * this.opacity;
+            ctx.moveTo(this.x, this.y);
+            ctx.lineTo(this.x, this.y + this.len);
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+        }
+    }
+
+    for (let i=0; i<particleCount; i++) particles.push(new Particle());
+
+    function animate() {
+        ctx.clearRect(0, 0, width, height);
+        particles.forEach(p => {
+            p.update();
+            p.draw();
+        });
+        requestAnimationFrame(animate);
+    }
+    animate();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaaSbyMonday Brand Identity: The Clarity Slash</title>
+    <style>
+        :root {
+            /* Base Brand Colors */
+            --brand-primary: #38bdf8;
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+        }
+
+        /* DARK THEME (Default) */
+        body {
+            --bg-page: #09090b;
+            --bg-card: #18181b;
+            --bg-hero-gradient: radial-gradient(circle at center, rgba(56, 189, 248, 0.05) 0%, transparent 60%);
+            
+            --text-main: #ffffff;
+            --text-muted: #a1a1aa;
+            --text-code-prefix: #ffffff;
+            
+            --border-color: #27272a;
+            --card-shadow: none;
+            
+            --logo-stroke-base: #38bdf8;
+            --logo-stroke-echo: rgba(56, 189, 248, 0.4);
+            --spark-color: #ffffff;
+            --brand-glow: rgba(56, 189, 248, 0.4);
+            
+            --grid-line: rgba(255,255,255,0.05);
+        }
+
+        /* LIGHT THEME */
+        body.light-theme {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-hero-gradient: radial-gradient(circle at center, rgba(14, 165, 233, 0.1) 0%, transparent 70%);
+            
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --text-code-prefix: #0f172a;
+            
+            --border-color: #e2e8f0;
+            --card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+            
+            /* Adjusted for contrast on white */
+            --logo-stroke-base: #0284c7; /* Sky 600 */
+            --logo-stroke-echo: rgba(2, 132, 199, 0.3);
+            
+            /* Яскрава помаранчева зірка для контрасту і суті "іскри" */
+            --spark-color: #f59e0b; 
+            --brand-glow: rgba(2, 132, 199, 0.25);
+            
+            --grid-line: rgba(0,0,0,0.05);
+            --brand-primary: #0ea5e9;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        h1, h2, h3 { margin: 0; }
+        
+        header {
+            margin-bottom: 60px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 20px;
+            transition: border-color 0.5s ease;
+        }
+
+        .brand-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .section-title {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            margin-top: 60px;
+        }
+
+        /* LOGO HERO SECTION */
+        .hero-logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 0;
+            background: var(--bg-hero-gradient);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease, background 0.5s ease, border-color 0.5s ease;
+            cursor: pointer;
+        }
+
+        .hero-logo:hover {
+            border-color: var(--brand-primary);
+            box-shadow: 0 0 40px var(--brand-glow);
+            transform: translateY(-2px);
+        }
+
+        /* THE LOGO SVG STYLING */
+        .logo-mark {
+            width: 120px;
+            height: 120px;
+            filter: drop-shadow(0 0 20px var(--brand-glow));
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.4s ease;
+        }
+
+        .hero-logo:hover .logo-mark {
+            transform: scale(1.1) rotate(-3deg);
+            filter: drop-shadow(0 0 30px var(--brand-primary));
+        }
+
+        /* CONCEPT ANIMATIONS */
+        .slash-base, .slash-echo, .spark {
+            transform-origin: center;
+            /* Зберігаємо transition для ховер-ефектів */
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.4s ease, filter 0.4s ease; 
+        }
+        
+        .spark {
+            transform-origin: 82px 22px;
+            opacity: 0; /* Приховано до початку анімації */
+            animation: spark-enter 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.8s forwards;
+            fill: var(--spark-color);
+        }
+
+        .slash-base {
+            stroke: var(--logo-stroke-base);
+            animation: slide-up-in 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        .slash-echo {
+            stroke: var(--logo-stroke-echo);
+            opacity: 1; /* Керуємо кольором через stroke-rgba, а не opacity */
+            animation: slide-down-in 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        /* KEYFRAMES FOR INTRO */
+        @keyframes slide-up-in {
+            0% { transform: translateY(150px) scale(0.8); opacity: 0; }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        @keyframes slide-down-in {
+            0% { transform: translateY(-150px) scale(0.8); opacity: 0; }
+            100% { transform: translateY(0) scale(1); opacity: 1; } 
+        }
+
+        @keyframes spark-enter {
+            0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        /* HOVER EFFECTS (Лишаємо інтерактивність) */
+        .hero-logo:hover .slash-base {
+            filter: drop-shadow(0 0 8px var(--brand-primary));
+            transform: translateY(-2px);
+        }
+
+        .hero-logo:hover .slash-echo {
+            transform: translate(4px, -4px);
+        }
+
+        .hero-logo:hover .spark {
+            animation: spark-live 2s infinite ease-in-out; /* Перезаписує анімацію появи */
+            filter: drop-shadow(0 0 15px var(--spark-color));
+        }
+
+        @keyframes spark-live {
+            0% { transform: scale(1) rotate(0deg); opacity: 1; }
+            50% { transform: scale(1.4) rotate(180deg); opacity: 1; }
+            100% { transform: scale(1) rotate(360deg); opacity: 1; }
+        }
+
+        .logo-text {
+            font-family: var(--font-sans);
+            font-weight: 700;
+            font-size: 3.5rem;
+            margin-top: 20px;
+            letter-spacing: -0.04em;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .text-code { color: var(--text-code-prefix); transition: color 0.5s ease; }
+        .text-way { color: var(--brand-primary); }
+
+        /* GRID SYSTEM */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: var(--card-shadow);
+            transition: all 0.5s ease;
+        }
+
+        .card-header {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text-muted);
+        }
+
+        /* CONSTRUCTION */
+        .construction-grid {
+            width: 100%;
+            height: 150px;
+            background-image: 
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+            background-size: 20px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            transition: background-image 0.5s ease;
+        }
+
+        /* THEME TOGGLE WIDGET */
+        .theme-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            border-color: var(--brand-primary);
+        }
+        .theme-icon {
+            width: 24px;
+            height: 24px;
+            fill: var(--text-main);
+            transition: fill 0.3s ease;
+        }
+
+        /* UI ELEMENTS MOCKUP */
+        .ui-button {
+            background: var(--brand-primary);
+            color: rgb(222, 246, 249); /* Завжди білий текст */
+            font-weight: 600;
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        .ui-button:hover {
+            box-shadow: 0 0 15px var(--brand-glow);
+            transform: translateY(-1px);
+        }
+
+        .app-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid #334155;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        /* NEW UI ELEMENTS */
+        .ui-label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .ui-input {
+            width: 100%;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            outline: none;
+            transition: all 0.2s;
+            box-sizing: border-box; /* Fix width issues */
+        }
+        
+        .ui-input:focus {
+            border-color: var(--brand-primary);
+            box-shadow: 0 0 0 3px var(--brand-glow);
+        }
+        .ui-input::placeholder { color: var(--text-muted); opacity: 0.5; }
+
+        /* TOGGLE SWITCH */
+        .ui-toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 12px;
+        }
+        
+        .ui-toggle {
+            width: 44px;
+            height: 24px;
+            background: var(--border-color);
+            border-radius: 99px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .ui-toggle::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .ui-toggle.active { background: var(--brand-primary); }
+        .ui-toggle.active::after { transform: translateX(20px); }
+
+        /* BADGES */
+        .badge-container { display: flex; gap: 8px; flex-wrap: wrap; }
+        
+        .ui-badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            font-family: var(--font-mono);
+            border: 1px solid transparent;
+        }
+        
+        .badge-brand { 
+            background: var(--brand-glow); 
+            color: var(--brand-primary); 
+            border-color: rgba(56, 189, 248, 0.2); 
+        }
+        
+        .badge-neutral { 
+            background: var(--border-color); 
+            color: var(--text-muted); 
+        }
+        
+        .badge-outline {
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        /* LOADING ANIMATION */
+        .loader {
+            display: flex;
+            gap: 5px;
+        }
+        .slash {
+            width: 6px;
+            height: 30px;
+            background: var(--brand-primary);
+            transform: skewX(-20deg);
+            animation: pulse 1s infinite alternate;
+            border-radius: 2px;
+        }
+        .slash:nth-child(2) { animation-delay: 0.2s; opacity: 0.5; }
+        .slash:nth-child(3) { animation-delay: 0.4s; opacity: 0.3; }
+
+        @keyframes pulse {
+            0% { height: 20px; opacity: 0.3; }
+            100% { height: 40px; opacity: 1; }
+        }
+
+        /* COLORS */
+        .color-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .color-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+
+    </style>
+    <style>
+        /* BRAND TESTER WIDGET STYLES */
+        .brand-tester {
+            position: fixed;
+            left: 20px;
+            top: 20px; /* Вгорі зліва компактніше */
+            /* transform: translateY(-50%); REMOVED centering */
+            background: rgba(24, 24, 27, 0.6); /* Dark theme default transparent */
+            backdrop-filter: blur(12px); /* Glass effect */
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            box-shadow: var(--card-shadow);
+            z-index: 90;
+            width: 140px;
+            transition: all 0.3s ease;
+        }
+
+        /* Light theme overrides for widget background */
+        body.light-theme .brand-tester {
+            background: rgba(255, 255, 255, 0.6);
+            border-color: rgba(0,0,0,0.05);
+        }
+        
+        .brand-tester-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+            font-weight: 600;
+        }
+
+        .brand-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 8px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+            font-family: var(--font-sans);
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .brand-btn:hover {
+            background: var(--bg-page);
+            color: var(--text-main);
+            border-color: var(--brand-primary);
+        }
+
+        .brand-btn.active {
+            background: var(--brand-primary);
+            color: white !important; /* Force white for contrast */
+            border-color: var(--brand-primary);
+            box-shadow: 0 0 15px var(--brand-glow);
+        }
+
+        @media (max-width: 1300px) {
+            .brand-tester {
+                display: none; 
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <header>
+        <div class="brand-name">SAASBYMONDAY <span style="color:var(--text-muted); font-weight:400;">/ Identity System v1.0</span></div>
+    </header>
+
+    <!-- HERO -->
+    <div class="hero-logo">
+        <svg class="logo-mark" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Second Slash (Shadow/Echo) - позаду -->
+            <path class="slash-echo" d="M55 85 L80 25" stroke-width="6" stroke-linecap="round"/>
+            <!-- First Slash (Base) - попереду -->
+            <path class="slash-base" d="M35 85 L60 25" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- The Spark (Top Right) -->
+            <path class="spark" d="M82 15 L86 22 L82 29 L78 22 Z"/>
+        </svg>
+        <div class="logo-text">
+            <span class="text-code">Code</span><span class="text-way">way</span>
+        </div>
+    </div>
+
+    <!-- LOGIC SECTION -->
+    <div class="section-title">01. Конструкція та Логіка</div>
+    <div class="grid-3">
+        
+        <!-- Logic Card 1 -->
+        <div class="card">
+            <div class="card-header">Слеш (//)</div>
+            <p style="color:var(--text-muted); font-size:0.9rem; line-height:1.6;">
+                У програмуванні `//` означає початок коментаря. Це місце, де код стає зрозумілим для людини. 
+                <br><br>
+                Ми використовуємо це як метафору: SaaSbyMonday перетворює складний AI-код на зрозумілий продукт.
+            </p>
+        </div>
+
+        <!-- Logic Card 2 -->
+        <div class="card">
+            <div class="card-header">Динаміка Вгору</div>
+            <div class="construction-grid">
+                <!-- Збільшена інфографіка з правильним кутом -->
+                <svg width="80" height="80" viewBox="0 0 100 100">
+                    <!-- Кут нахилу відповідає логотипу (~65-70 градусів) -->
+                    <line x1="35" y1="90" x2="65" y2="10" stroke="var(--brand-primary)" stroke-width="3" stroke-dasharray="6 4" stroke-linecap="round"/>
+                    <circle cx="35" cy="90" r="4" fill="var(--text-muted)"/>
+                    <circle cx="65" cy="10" r="4" fill="var(--brand-primary)"/>
+                    <text x="50" y="90" fill="var(--text-muted)" font-size="10" text-anchor="middle" dy="15">Ріст</text>
+                </svg>
+            </div>
+            <p style="color:var(--text-muted); font-size:0.9rem;">
+                Кут нахилу ліній символізує ріст, прогрес та оптимізм. Це не статичні стовпці, це рух вперед.
+            </p>
+        </div>
+
+        <!-- Logic Card 3 -->
+        <div class="card">
+            <div class="card-header">Іскра (Spark)</div>
+            <div style="display:flex; justify-content:center; padding:20px;">
+                <svg width="60" height="60" viewBox="0 0 40 40">
+                    <!-- Ромбовидна форма як у логотипі (відцентрована в 40x40) -->
+                    <!-- Center is 20,20. Size approx 20x30 -->
+                    <path d="M20 5 L26 20 L20 35 L14 20 Z" fill="var(--spark-color)"/>
+                </svg>
+            </div>
+            <p style="color:var(--text-muted); font-size:0.9rem;">
+                Маленька зірка/іскра — це "Північна зірка" продукту. Це результат, до якого ми ведемо користувача.
+            </p>
+        </div>
+    </div>
+
+    <!-- APPLICATION SECTION -->
+    <div class="section-title">02. Використання в UI</div>
+    <div class="grid-3">
+        
+        <!-- App Icon -->
+        <div class="card" style="display:flex; flex-direction:column; align-items:center;">
+            <div class="card-header" style="width:100%">App Icon</div>
+            <div style="display: flex; gap: 15px;">
+                <!-- Dark Icon (Original Design Restored) -->
+                <div class="app-icon" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-color: #334155;">
+                    <svg width="40" height="40" viewBox="0 0 100 100" fill="none">
+                        <path d="M30 80 L55 20" stroke="#38bdf8" stroke-width="12" stroke-linecap="round"/>
+                        <path d="M55 80 L80 20" stroke="#38bdf8" stroke-width="8" stroke-opacity="0.4" stroke-linecap="round"/>
+                        <circle cx="85" cy="15" r="5" fill="white"/>
+                    </svg>
+                </div>
+                <!-- Light Icon (Adapted from Dark) -->
+                <div class="app-icon" style="background: #ffffff; border-color: #e2e8f0; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                    <svg width="40" height="40" viewBox="0 0 100 100" fill="none">
+                        <path d="M30 80 L55 20" stroke="#0284c7" stroke-width="12" stroke-linecap="round"/>
+                        <path d="M55 80 L80 20" stroke="#0284c7" stroke-width="8" stroke-opacity="0.3" stroke-linecap="round"/>
+                        <circle cx="85" cy="15" r="5" fill="#f59e0b"/>
+                    </svg>
+                </div>
+            </div>
+            <p style="margin-top:15px; font-size:0.8rem; color:#666;">Dark & Light Mode</p>
+        </div>
+
+        <!-- CTA Button -->
+        <div class="card" style="display:flex; flex-direction:column; justify-content:center;">
+            <div class="card-header">Primary Button</div>
+            <div>
+                <button class="ui-button">
+                    <span>Start Building</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Loader -->
+        <div class="card" style="display:flex; flex-direction:column; justify-content:center;">
+            <div class="card-header">Loading State</div>
+            <div class="loader">
+                <div class="slash"></div>
+                <div class="slash"></div>
+                <div class="slash"></div>
+            </div>
+            <p style="margin-top:15px; font-size:0.8rem; color:#666;">Анімація для завантаження AI</p>
+        </div>
+
+        <!-- NEW: Inputs -->
+        <div class="card">
+            <div class="card-header">Input Field</div>
+            <div style="margin-bottom:15px;">
+                <label class="ui-label">Project Name</label>
+                <input type="text" class="ui-input" placeholder="e.g. vibecoding-app" value="saasbymonday-v1">
+            </div>
+            <div>
+                <label class="ui-label">Branch</label>
+                <input type="text" class="ui-input" placeholder="main" style="border-color:var(--brand-primary);">
+            </div>
+        </div>
+
+        <!-- NEW: Toggles & Controls -->
+        <div class="card">
+            <div class="card-header">Toggles & Controls</div>
+            
+            <div class="ui-toggle-row">
+                <span style="font-size:0.9rem;">Auto-Deploy</span>
+                <div class="ui-toggle active"></div>
+            </div>
+            
+            <div class="ui-toggle-row">
+                <span style="font-size:0.9rem; color:var(--text-muted);">Debug Mode</span>
+                <div class="ui-toggle"></div>
+            </div>
+
+            <div style="margin-top:20px; display:flex; gap:10px; align-items:center;">
+                <!-- Checkbox simulation -->
+                <div style="width:20px; height:20px; border-radius:4px; background:var(--brand-primary); display:flex; align-items:center; justify-content:center;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div>
+                <span style="font-size:0.9rem;">Production Ready</span>
+            </div>
+        </div>
+
+        <!-- NEW: Badges -->
+        <div class="card">
+            <div class="card-header">Status Badges</div>
+            <div class="badge-container" style="margin-bottom:15px;">
+                <span class="ui-badge badge-brand">v2.0.4</span>
+                <span class="ui-badge badge-neutral">Draft</span>
+                <span class="ui-badge badge-outline">Public</span>
+            </div>
+            <div class="badge-container">
+                <span class="ui-badge" style="background:rgba(16, 185, 129, 0.15); color:#10b981; border:1px solid rgba(16, 185, 129, 0.2);">Deployed</span>
+                <span class="ui-badge" style="background:rgba(239, 68, 68, 0.15); color:#ef4444; border:1px solid rgba(239, 68, 68, 0.2);">Failed</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- TYPOGRAPHY & COLOR -->
+    <div class="section-title">03. Колір та Шрифт</div>
+    <div class="grid-3">
+        <div class="card">
+            <div class="card-header">Основна палітра</div>
+            <div class="color-row">
+                <div class="color-circle" style="background:#38bdf8; box-shadow:0 0 10px #38bdf8;"></div>
+                <div>
+                    <div style="font-weight:bold;">Sky Blue</div>
+                    <div style="font-size:0.8rem; color:#666;">#38BDF8</div>
+                </div>
+            </div>
+            <div class="color-row">
+                <div class="color-circle" style="background:#09090b; border:1px solid #333;"></div>
+                <div>
+                    <div style="font-weight:bold;">Zinc Black</div>
+                    <div style="font-size:0.8rem; color:#666;">#09090B</div>
+                </div>
+            </div>
+            <div class="color-row">
+                <div class="color-circle" style="background:rgb(222, 246, 249); border:1px solid #ddd;"></div>
+                <div>
+                    <div style="font-weight:bold;">Ice White</div>
+                    <div style="font-size:0.8rem; color:#666;">rgb(222, 246, 249)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="grid-column: span 2;">
+            <div class="card-header">Типографіка</div>
+            <div style="font-family: 'Inter', sans-serif; font-size: 2rem; font-weight: 700; margin-bottom:10px;">
+                Build clearly.
+            </div>
+            <div style="font-family: 'Inter', sans-serif; font-size: 1rem; color: var(--text-muted); line-height: 1.5;">
+                Ми використовуємо <strong>Inter</strong> або <strong>SF Pro</strong> для основного інтерфейсу, щоб зберегти максимальну читабельність.
+                <br>
+                Для коду та технічних даних — <span style="font-family: 'JetBrains Mono', monospace; color: var(--brand-primary);">JetBrains Mono</span>.
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- BRAND TESTER WIDGET -->
+<div class="brand-tester">
+    <div class="brand-tester-title">Brand Lab</div>
+    <button class="brand-btn active" onclick="setBrand('SaaSbyMonday')">SaaSbyMonday</button>
+    <button class="brand-btn" onclick="setBrand('Vibeway')">Vibeway</button>
+    <button class="brand-btn" onclick="setBrand('Buildway')">Buildway</button>
+    <button class="brand-btn" onclick="setBrand('CodeLaunch')">CodeLaunch</button>
+    <button class="brand-btn" onclick="setBrand('CodeFrame')">CodeFrame</button>
+</div>
+
+<!-- THEME TOGGLE WIDGET -->
+<div class="theme-toggle" id="themeToggle" title="Toggle Theme">
+    <!-- Sun Icon (Default hidden in Dark Mode via CSS if we wanted, but here we just swap SVG content or rotate) -->
+    <svg class="theme-icon" viewBox="0 0 24 24" id="themeIcon">
+        <!-- Moon Path (for Dark Mode) -->
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+    </svg>
+</div>
+
+<script>
+    const toggleBtn = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const body = document.body;
+
+    // Icons
+    const moonPath = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+    const sunPath = '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+
+    toggleBtn.addEventListener('click', () => {
+        body.classList.toggle('light-theme');
+        
+        // Check current state
+        if (body.classList.contains('light-theme')) {
+            themeIcon.innerHTML = sunPath;
+            themeIcon.style.stroke = "currentColor";
+            themeIcon.style.strokeWidth = "2";
+            themeIcon.style.fill = "none";
+        } else {
+            themeIcon.innerHTML = moonPath;
+            themeIcon.style.stroke = "none";
+            themeIcon.style.fill = "currentColor";
+        }
+    });
+
+    // BRAND LAB LOGIC
+    const brandParts = {
+        'SaaSbyMonday': ['Code', 'way'],
+        'Vibeway': ['Vibe', 'way'],
+        'Buildway': ['Build', 'way'],
+        'CodeLaunch': ['Code', 'Launch'],
+        'CodeFrame': ['Code', 'Frame']
+    };
+
+    let currentBrand = 'SaaSbyMonday';
+
+    function setBrand(name) {
+        // Update Buttons
+        document.querySelectorAll('.brand-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.textContent === name);
+        });
+
+        // 1. Update Main Logo (Visual Split)
+        const [part1, part2] = brandParts[name];
+        const codeText = document.querySelector('.text-code');
+        const wayText = document.querySelector('.text-way');
+        
+        // Animate change
+        codeText.style.opacity = 0;
+        wayText.style.opacity = 0;
+        
+        setTimeout(() => {
+            codeText.textContent = part1;
+            wayText.textContent = part2;
+            codeText.style.opacity = 1;
+            wayText.style.opacity = 1;
+        }, 200);
+
+        // 2. Update Header Brand Name
+        const headerBrand = document.querySelector('.brand-name');
+        // Replace first text node only (before the span)
+        if(headerBrand.firstChild.nodeType === 3) {
+            headerBrand.firstChild.nodeValue = name.toUpperCase() + ' ';
+        }
+
+        // 3. Update Text Content (Replace all occurrences)
+        // We only scan specific areas to avoid breaking scripts or SVG
+        const textElements = document.querySelectorAll('p, h1, h2, h3, .card-header, button span');
+        
+        textElements.forEach(el => {
+            // Simple replace of the PREVIOUS brand name with the NEW one
+            // Use regex with word boundary to be safe
+            const regex = new RegExp(currentBrand, 'g');
+            el.innerHTML = el.innerHTML.replace(regex, name);
+        });
+
+        // Update Title
+        document.title = document.title.replace(currentBrand, name);
+
+        // Update current brand state
+        currentBrand = name;
+    }
+</script>
+
+</body>
+</html>
